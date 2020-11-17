@@ -1,6 +1,6 @@
 {
   "name": "wdrawer",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Navigation drawer in pure JS",
   "lib": {
     "title": "WDrawer",

@@ -1,6 +1,6 @@
 /*!
  * WDrawer — core ES5 scripts
- * Version: 1.0.0
+ * Version: 1.0.3
  * Repo: https://github.com/WahaWaher/wdrawer
  * Author: WahaWaher
  * Contacts: wahawaher@mail.com
@@ -11,6 +11,22 @@
   typeof define === 'function' && define.amd ? define(factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.WDrawer = factory());
 }(this, (function () {
+  function _typeof(obj) {
+    "@babel/helpers - typeof";
+
+    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+      _typeof = function (obj) {
+        return typeof obj;
+      };
+    } else {
+      _typeof = function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+      };
+    }
+
+    return _typeof(obj);
+  }
+
   var defaults = {
     width: 275,
     // drawer width, px
@@ -57,29 +73,61 @@
     target.parentNode.insertBefore(node, target.nextSibling);
   };
   /**
+   * Utils: _getSingleNode
+   */
+
+
+  var _getSingleNode = function _getSingleNode(entity) {
+    var output = null;
+
+    if (typeof entity === 'string') {
+      // is selector
+      output = document.querySelector(entity);
+    } else if (_typeof(entity) === 'object') {
+      if (Node.prototype.isPrototypeOf(entity)) {
+        // is single node
+        output = entity;
+      }
+
+      if (NodeList.prototype.isPrototypeOf(entity)) {
+        // is node list
+        output = entity[0] || null;
+      }
+    }
+
+    return output;
+  };
+  /**
    * Construnctor
    */
 
 
-  var WDrawer = function WDrawer(selector, options) {
+  function WDrawer(entity, options) {
     var _ = this;
 
-    var state = _.state = {};
-    var sets; // handle options
+    var drawerNode = _getSingleNode(entity);
+
+    if (!drawerNode) return; // handle defaults/options
 
     _.defaults = defaults;
-    _.settings = sets = Object.assign({}, defaults, options || {}); // save/create main nodes
+    _.settings = Object.assign({}, defaults, options || {}); // save/create main nodes
 
     _.nodes = {
-      drawer: document.querySelector(selector),
-      page: document.querySelector(sets.page),
+      drawer: drawerNode,
+      page: _getSingleNode(_.settings.page),
       backdrop: document.createElement('div')
-    };
-    var prefix = sets.prefix;
-    var _$nodes = _.nodes;
-    var drawer = _$nodes.drawer;
-    var page = _$nodes.page;
-    var backdrop = _$nodes.backdrop;
+    }; // create state object
+
+    _.state = {};
+    var _$settings = _.settings,
+        prefix = _$settings.prefix,
+        position = _$settings.position,
+        width = _$settings.width,
+        open = _$settings.open;
+    var _$nodes = _.nodes,
+        drawer = _$nodes.drawer,
+        pageNode = _$nodes.page,
+        backdrop = _$nodes.backdrop;
     backdrop.addEventListener('click', _.close.bind(_));
 
     _inserAfter(backdrop, drawer); // add classes
@@ -89,50 +137,51 @@
 
     _addClass(backdrop, 'wdrawer-backdrop', prefix && 'wdrawer-' + prefix + '-backdrop');
 
-    page && _addClass(page, 'wdrawer-page', prefix && 'wdrawer-' + prefix + '-page'); // set styles for drawer
+    pageNode && _addClass(pageNode, 'wdrawer-page', prefix && 'wdrawer-' + prefix + '-page'); // set styles for drawer
 
-    _setStyle(drawer, 'width', sets.width + 'px');
+    _setStyle(drawer, 'width', width + 'px');
 
-    _setStyle(drawer, sets.position, -sets.width + 'px');
+    _setStyle(drawer, position, -width + 'px');
 
     _setStyle(drawer, 'display', ''); // put instance in drawer node
 
 
     drawer.drawer = _;
-    if (sets.open) _.open();
-  };
+    if (open) _.open();
+  }
 
-  var meth = WDrawer.prototype;
+  var method = WDrawer.prototype;
   /**
    * Open drawer
    */
 
-  meth.open = function () {
+  method.open = function () {
     var _ = this;
 
-    var sets = _.settings;
-    var _$nodes = _.nodes;
-    var drawer = _$nodes.drawer;
-    var page = _$nodes.page;
-    var backdrop = _$nodes.backdrop;
-    var pagePos = sets.position === 'right' ? -sets.width : sets.width;
+    var _$settings2 = _.settings,
+        position = _$settings2.position,
+        width = _$settings2.width;
+    var _$nodes2 = _.nodes,
+        drawer = _$nodes2.drawer,
+        page = _$nodes2.page,
+        backdrop = _$nodes2.backdrop;
+    var pagePos = position === 'right' ? -width : width;
 
     _setStyle(document.documentElement, 'overflow', 'hidden');
 
     _addClass(drawer, 'is-open');
 
-    _setStyle(drawer, sets.position, '0');
+    _setStyle(drawer, position, '0');
 
     page && _setStyle(page, 'transform', 'translateX(' + pagePos + 'px)');
 
     _addClass(backdrop, 'is-active');
 
-    var wdrawerOpen = new CustomEvent('wdrawer.open', {
+    drawer.dispatchEvent(new CustomEvent('wdrawer.open', {
       detail: {
         instance: _
       }
-    });
-    drawer.dispatchEvent(wdrawerOpen);
+    }));
     _.state.open = true;
   };
   /**
@@ -140,14 +189,16 @@
    */
 
 
-  meth.close = function () {
+  method.close = function () {
     var _ = this;
 
-    var sets = _.settings;
-    var _$nodes = _.nodes;
-    var drawer = _$nodes.drawer;
-    var page = _$nodes.page;
-    var backdrop = _$nodes.backdrop;
+    var _$settings3 = _.settings,
+        position = _$settings3.position,
+        width = _$settings3.width;
+    var _$nodes3 = _.nodes,
+        drawer = _$nodes3.drawer,
+        page = _$nodes3.page,
+        backdrop = _$nodes3.backdrop;
 
     _setStyle(document.documentElement, 'overflow', '');
 
@@ -155,15 +206,14 @@
 
     _removeClass(backdrop, 'is-active');
 
-    _setStyle(drawer, sets.position, -sets.width + 'px');
+    _setStyle(drawer, position, -width + 'px');
 
     page && _setStyle(page, 'transform', 'translateX(0)');
-    var wdrawerClose = new CustomEvent('wdrawer.close', {
+    drawer.dispatchEvent(new CustomEvent('wdrawer.close', {
       detail: {
         instance: _
       }
-    });
-    drawer.dispatchEvent(wdrawerClose);
+    }));
     _.state.open = false;
   };
   /**
@@ -171,7 +221,7 @@
    */
 
 
-  meth["switch"] = function () {
+  method["switch"] = function () {
     var _ = this;
 
     _.state.open ? _.close() : _.open();

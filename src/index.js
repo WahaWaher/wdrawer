@@ -32,29 +32,53 @@ const _inserAfter = (node, target) => {
 };
 
 /**
+ * Utils: _getSingleNode
+ */
+const _getSingleNode = function (entity) {
+  let output = null;
+
+  if (typeof entity === 'string') {
+    // is selector
+    output = document.querySelector(entity);
+  } else if (typeof entity === 'object') {
+    if (Node.prototype.isPrototypeOf(entity)) {
+      // is single node
+      output = entity;
+    }
+    if (NodeList.prototype.isPrototypeOf(entity)) {
+      // is node list
+      output = entity[0] || null;
+    }
+  }
+
+  return output;
+};
+
+/**
  * Construnctor
  */
-const WDrawer = function WDrawer(selector, options) {
+function WDrawer(entity, options) {
   const _ = this;
-  const state = (_.state = {});
-  let sets, nodes;
+  const drawerNode = _getSingleNode(entity);
 
-  // handle options
+  if (!drawerNode) return;
+
+  // handle defaults/options
   _.defaults = defaults;
-  _.settings = sets = Object.assign({}, defaults, options || {});
+  _.settings = Object.assign({}, defaults, options || {});
 
   // save/create main nodes
   _.nodes = {
-    drawer: document.querySelector(selector),
-    page: document.querySelector(sets.page),
+    drawer: drawerNode,
+    page: _getSingleNode(_.settings.page),
     backdrop: document.createElement('div'),
   };
 
-  const prefix = sets.prefix;
-  const _$nodes = _.nodes;
-  const drawer = _$nodes.drawer;
-  const page = _$nodes.page;
-  const backdrop = _$nodes.backdrop;
+  // create state object
+  _.state = {};
+
+  const { prefix, position, width, open } = _.settings;
+  const { drawer, page: pageNode, backdrop } = _.nodes;
 
   backdrop.addEventListener('click', _.close.bind(_));
   _inserAfter(backdrop, drawer);
@@ -66,46 +90,47 @@ const WDrawer = function WDrawer(selector, options) {
     'wdrawer-backdrop',
     prefix && 'wdrawer-' + prefix + '-backdrop',
   );
-  page &&
-    _addClass(page, 'wdrawer-page', prefix && 'wdrawer-' + prefix + '-page');
+  pageNode &&
+    _addClass(
+      pageNode,
+      'wdrawer-page',
+      prefix && 'wdrawer-' + prefix + '-page',
+    );
 
   // set styles for drawer
-  _setStyle(drawer, 'width', sets.width + 'px');
-  _setStyle(drawer, sets.position, -sets.width + 'px');
+  _setStyle(drawer, 'width', width + 'px');
+  _setStyle(drawer, position, -width + 'px');
   _setStyle(drawer, 'display', '');
 
   // put instance in drawer node
   drawer.drawer = _;
-  if (sets.open) _.open();
-};
+  if (open) _.open();
+}
 
-const meth = WDrawer.prototype;
+const method = WDrawer.prototype;
 
 /**
  * Open drawer
  */
-meth.open = function () {
+method.open = function () {
   const _ = this;
-  const sets = _.settings;
-  const _$nodes = _.nodes;
-  const drawer = _$nodes.drawer;
-  const page = _$nodes.page;
-  const backdrop = _$nodes.backdrop;
-  const pagePos = sets.position === 'right' ? -sets.width : sets.width;
+  const { position, width } = _.settings;
+  const { drawer, page, backdrop } = _.nodes;
+  const pagePos = position === 'right' ? -width : width;
 
   _setStyle(document.documentElement, 'overflow', 'hidden');
   _addClass(drawer, 'is-open');
-  _setStyle(drawer, sets.position, '0');
+  _setStyle(drawer, position, '0');
   page && _setStyle(page, 'transform', 'translateX(' + pagePos + 'px)');
   _addClass(backdrop, 'is-active');
 
-  const wdrawerOpen = new CustomEvent('wdrawer.open', {
-    detail: {
-      instance: _,
-    },
-  });
-
-  drawer.dispatchEvent(wdrawerOpen);
+  drawer.dispatchEvent(
+    new CustomEvent('wdrawer.open', {
+      detail: {
+        instance: _,
+      },
+    }),
+  );
 
   _.state.open = true;
 };
@@ -113,26 +138,24 @@ meth.open = function () {
 /**
  * Close drawer
  */
-meth.close = function () {
+method.close = function () {
   const _ = this;
-  const sets = _.settings;
-  const _$nodes = _.nodes;
-  const drawer = _$nodes.drawer;
-  const page = _$nodes.page;
-  const backdrop = _$nodes.backdrop;
+  const { position, width } = _.settings;
+  const { drawer, page, backdrop } = _.nodes;
 
   _setStyle(document.documentElement, 'overflow', '');
   _removeClass(drawer, 'is-open');
   _removeClass(backdrop, 'is-active');
-  _setStyle(drawer, sets.position, -sets.width + 'px');
+  _setStyle(drawer, position, -width + 'px');
   page && _setStyle(page, 'transform', 'translateX(0)');
 
-  const wdrawerClose = new CustomEvent('wdrawer.close', {
-    detail: {
-      instance: _,
-    },
-  });
-  drawer.dispatchEvent(wdrawerClose);
+  drawer.dispatchEvent(
+    new CustomEvent('wdrawer.close', {
+      detail: {
+        instance: _,
+      },
+    }),
+  );
 
   _.state.open = false;
 };
@@ -140,7 +163,7 @@ meth.close = function () {
 /**
  * Switch drawer
  */
-meth.switch = function () {
+method.switch = function () {
   const _ = this;
 
   _.state.open ? _.close() : _.open();

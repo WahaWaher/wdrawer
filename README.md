@@ -1,4 +1,4 @@
-wDrawer <sup>1.0.0</sup>
+wDrawer <sup>1.0.3</sup>
 -------
 Navigation drawers provide access to destinations in your app.
 Side sheets are surfaces containing supplementary content that are anchored to the left or right edge of the screen.
