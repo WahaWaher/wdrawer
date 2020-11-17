@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WDrawer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="css/demo.css">
+  <link rel="stylesheet" href="css/wdrawer.css">
+</head>
+
+<body>
+  <div class="app">
+    <div class="app-content">
+      <div class="app-header py-3">
+        <div class="container">
+          <button onclick="appDrawer.switch()">Drawer Switch</button>
+        </div>
+      </div>
+      <div class="app-page">
+        <div class="container">
+          <h2>Page title</h2>
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+          Excepturi ad cumque nam nobis perferendis mollitia repudiandae
+          suscipit soluta animi eius, voluptas ea libero sapiente laudantium
+          voluptatibus similique exercitationem illo veniam provident earum rem
+          obcaecati velit reiciendis! Veritatis delectus veniam facere optio sit
+          quibusdam deleniti nostrum eius sapiente eligendi? Aliquid, ad id error,
+          pariatur quam neque similique, et perspiciatis recusandae dignissimos
+          officia repellendus asperiores iure! Aperiam ad impedit cupiditate quasi
+          doloremque officiis iusto nostrum porro veniam modi voluptates, reiciendis
+          obcaecati quos quae cumque corporis, magnam nam, aut iure voluptatem autem.
+          Quibusdam maiores, qui voluptatem possimus distinctio non amet, porro ipsa
+          ducimus minima veniam obcaecati. Consectetur ratione nemo maiores! Suscipit
+          facilis quas similique ullam odit harum modi commodi nesciunt ipsam impedit
+          iusto animi quaerat quo quos excepturi in minima, exercitationem expedita?
+          Reprehenderit ut non sapiente eaque, expedita accusamus nam deleniti sint?
+        </div>
+      </div>
+      <div class="app-footer py-3">
+        <div class="container">
+          Footer...
+        </div>
+      </div>
+    </div>
+
+    <div class="app-drawer" style="display:none">
+      <div class="container">
+        <h2>app drawer content...</h2>
+        <p>
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+          Excepturi ad cumque nam nobis perferendis mollitia repudiandae
+          suscipit soluta animi eius, voluptas ea libero sapiente laudantium
+          voluptatibus similique exercitationem illo veniam provident earum rem
+          obcaecati velit reiciendis! Veritatis delectus veniam facere optio sit
+          quibusdam deleniti nostrum eius sapiente eligendi? Aliquid, ad id error,
+          pariatur quam neque similique, et perspiciatis recusandae dignissimos
+          officia repellendus asperiores iure! Aperiam ad impedit cupiditate quasi
+          doloremque officiis iusto nostrum porro veniam modi voluptates, reiciendis
+          obcaecati quos quae cumque corporis, magnam nam, aut iure voluptatem autem.
+          Quibusdam maiores, qui voluptatem possimus distinctio non amet, porro ipsa
+          ducimus minima veniam obcaecati. Consectetur ratione nemo maiores! Suscipit
+          facilis quas similique ullam odit harum modi commodi nesciunt ipsam impedit
+          iusto animi quaerat quo quos excepturi in minima, exercitationem expedita?
+          Reprehenderit ut non sapiente eaque, expedita accusamus nam deleniti sint?
+        </p>
+      </div>
+    </div>
+
+  </div>
+  <script src="js/wdrawer.umd.es5.js"></script>
+  <script>
+    window.addEventListener('load', function() {
+
+      document.querySelector('.app-drawer').addEventListener('wdrawer.open', function(e) {
+        var instance = e.detail.instance;
+        // var { defaults, nodes, settings, state } = instance;
+
+        // instance.open();
+        // instance.close();
+        // instance.switch();
+      });
+
+      appDrawer = new WDrawer('.app-drawer', {
+        // width: 275,
+        // position: 'right',
+        page: '.app-content',
+      });
+
+
+    });
+  </script>
+</body>
+
+</html>

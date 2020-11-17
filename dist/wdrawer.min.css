@@ -1,0 +1,8 @@
+/*!
+ * WDrawer — core styles
+ * Version: 0.9.0
+ * Repo: https://github.com/WahaWaher/wdrawer
+ * Author: WahaWaher
+ * Contacts: wahawaher@mail.com
+ * License: MIT
+ */.wdrawer{background:#fff;overflow-x:hidden;overflow-y:scroll;-webkit-overflow-scrolling:touch;z-index:1200}.wdrawer,.wdrawer-backdrop{position:fixed;top:0;bottom:0}.wdrawer,.wdrawer-backdrop,.wdrawer-page{-webkit-transition:all .15s ease-out;transition:all .15s ease-out}.wdrawer-page{-webkit-transition-delay:.05s;transition-delay:.05s}.wdrawer-backdrop{left:0;right:0;background:#000;opacity:0;visibility:hidden;z-index:1000}.wdrawer-backdrop.is-active{opacity:.5;visibility:visible}

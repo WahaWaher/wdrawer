@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+}
+.app {
+  &-header {
+    background-color: #f1f1f1;
+  }
+  &-page {}
+  &-footer {
+    background-color: #f1f1f1;
+  }
+}
